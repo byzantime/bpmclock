@@ -262,8 +262,8 @@ class CircularVisualization {
         this.centerY = canvas.height / 2;
         // Larger outer radius for the visualization ring
         this.outerRadius = Math.min(this.centerX, this.centerY) - 20;
-        // Inner radius to clear space for the tap button (256px diameter = 128px radius + padding)
-        this.innerRadius = 140;
+        // Inner radius to match the tap zone (320px diameter = 160px radius)
+        this.innerRadius = 160;
     }
 
     clear() {
@@ -349,11 +349,11 @@ class CircularVisualization {
                 }
             }
 
-            // Calculate radial line coordinates (extending outward from outer radius)
-            const startX = this.centerX + Math.cos(angle) * this.outerRadius;
-            const startY = this.centerY + Math.sin(angle) * this.outerRadius;
-            const endX = this.centerX + Math.cos(angle) * (this.outerRadius + markLength);
-            const endY = this.centerY + Math.sin(angle) * (this.outerRadius + markLength);
+            // Calculate radial line coordinates (extending outward from tap zone edge)
+            const startX = this.centerX + Math.cos(angle) * this.innerRadius;
+            const startY = this.centerY + Math.sin(angle) * this.innerRadius;
+            const endX = this.centerX + Math.cos(angle) * (this.innerRadius + markLength);
+            const endY = this.centerY + Math.sin(angle) * (this.innerRadius + markLength);
 
             // Draw radial mark
             ctx.strokeStyle = color;
@@ -597,7 +597,7 @@ class TapTempoUI {
 
         // Visual feedback
         this.tapZone.classList.add('active');
-        setTimeout(() => this.tapZone.classList.remove('active'), 150);
+        setTimeout(() => this.tapZone.classList.remove('active'), 100);
 
         // Update immediately
         this.updateUI();

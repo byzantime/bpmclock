@@ -41,6 +41,16 @@
 }
 
 @layer components {
+  /* Keyframe animation for tap feedback - shrink immediately, then expand */
+  @keyframes tap-pulse {
+    0% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
   /* Input styles */
   .tap-input {
     @apply bg-cream border border-cream-border text-charcoal text-2xl text-center p-4 rounded-soft
@@ -72,24 +82,20 @@
            border-4 border-slate-blue rounded-full
            flex flex-col items-center justify-center
            cursor-pointer select-none
-           transition-all duration-150
            shadow-soft-lg
-           hover:shadow-blue-glow
-           active:scale-95;
+           hover:shadow-blue-glow;
   }
 
   /* Tap Zone Overlay (positioned over canvas) */
   .tap-zone-overlay {
     @apply absolute
-           w-64 h-64
+           w-80 h-80
            bg-gradient-to-br from-cream-dark to-cream
            border-4 border-slate-blue rounded-full
            flex flex-col items-center justify-center
            cursor-pointer select-none
-           transition-all duration-150
            shadow-soft-lg
            hover:shadow-blue-glow
-           active:scale-95
            z-10;
   }
 
@@ -101,10 +107,11 @@
     @apply text-sm text-charcoal-dim mt-2 uppercase tracking-wide;
   }
 
-  /* Tap Zone Active State */
+  /* Tap Zone Active State - Fire-and-forget animation */
   .tap-zone.active,
   .tap-zone-overlay.active {
-    @apply scale-95 shadow-blue-glow border-slate-blue-dark;
+    animation: tap-pulse 100ms ease-out;
+    @apply shadow-blue-glow border-slate-blue-dark;
   }
 
   /* Stat Cards */
@@ -180,20 +187,4 @@
     }
   }
 
-  /* Pulse animation for tap feedback */
-  .tap-pulse {
-    animation: tapPulse 0.3s ease-out;
-  }
-
-  @keyframes tapPulse {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(0.95);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
 }

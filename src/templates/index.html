@@ -70,6 +70,46 @@
     <!-- Training Screen (hidden initially) -->
     <div id="training-screen" class="hidden max-w-6xl mx-auto">
         <div class="grid md:grid-cols-3 gap-8">
+            <!-- Center/Right Panel: Integrated Tap Zone with Rhythm History -->
+            <div class="md:col-span-2">
+                <!-- Combined Tap Zone and Visualization -->
+                <div class="mb-6">
+                    <!-- Container for Canvas and Tap Button -->
+                    <div class="relative flex justify-center items-center">
+                        <!-- Canvas Background -->
+                        <canvas id="tap-circle" width="500" height="500" class="max-w-full"></canvas>
+                        <!-- Tap Zone (positioned over canvas) -->
+                        <div id="tap-zone" class="tap-zone-overlay" tabindex="0" role="button" aria-label="Tap here to maintain rhythm">
+                            <div class="tap-zone-text">TAP</div>
+                            <div class="tap-zone-subtitle">Click or press spacebar</div>
+                        </div>
+                    </div>
+
+                    <!-- Last Tap Feedback -->
+                    <div class="text-center mt-4">
+                        <div id="tap-feedback" class="text-lg font-light text-charcoal-dim">
+                            Start tapping to the beat
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="flex justify-center gap-6 text-xs text-charcoal-dim">
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-success-green"></div>
+                        <span>On time</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-warning-amber"></div>
+                        <span>Slightly off</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-error-red"></div>
+                        <span>Significantly off</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Left Panel: Stats -->
             <div class="md:col-span-1 space-y-4">
                 <!-- Metronome Indicator -->
@@ -125,46 +165,6 @@
                 <button id="stop-button" class="secondary-button w-full">
                     Stop Session
                 </button>
-            </div>
-
-            <!-- Center/Right Panel: Integrated Tap Zone with Rhythm History -->
-            <div class="md:col-span-2">
-                <!-- Combined Tap Zone and Visualization -->
-                <div class="mb-6">
-                    <!-- Container for Canvas and Tap Button -->
-                    <div class="relative flex justify-center items-center">
-                        <!-- Canvas Background -->
-                        <canvas id="tap-circle" width="500" height="500" class="max-w-full"></canvas>
-                        <!-- Tap Zone (positioned over canvas) -->
-                        <div id="tap-zone" class="tap-zone-overlay" tabindex="0" role="button" aria-label="Tap here to maintain rhythm">
-                            <div class="tap-zone-text">TAP</div>
-                            <div class="tap-zone-subtitle">Click or press spacebar</div>
-                        </div>
-                    </div>
-
-                    <!-- Last Tap Feedback -->
-                    <div class="text-center mt-4">
-                        <div id="tap-feedback" class="text-lg font-light text-charcoal-dim">
-                            Start tapping to the beat
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Legend -->
-                <div class="flex justify-center gap-6 text-xs text-charcoal-dim">
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-success-green"></div>
-                        <span>On time</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-warning-amber"></div>
-                        <span>Slightly off</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-error-red"></div>
-                        <span>Significantly off</span>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
