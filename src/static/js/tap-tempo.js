@@ -194,8 +194,13 @@ class AudioMetronome {
         this.visualCallback = callback;
     }
 
-    playClick() {
+    async playClick() {
         if (!this.audioContext) return;
+
+        // Resume AudioContext if suspended (required for mobile browsers)
+        if (this.audioContext.state === 'suspended') {
+            await this.audioContext.resume();
+        }
 
         const now = this.audioContext.currentTime;
 
@@ -262,8 +267,9 @@ class CircularVisualization {
         this.centerY = canvas.height / 2;
         // Larger outer radius for the visualization ring
         this.outerRadius = Math.min(this.centerX, this.centerY) - 20;
-        // Inner radius to match the tap zone (320px diameter = 160px radius)
-        this.innerRadius = 160;
+        // Inner radius scaled proportionally to canvas size (65% of outer radius)
+        // This ensures radial lines are visible on all device sizes
+        this.innerRadius = this.outerRadius * 0.65;
     }
 
     clear() {
@@ -279,35 +285,12 @@ class CircularVisualization {
     drawClockFace() {
         const ctx = this.ctx;
 
-        // Draw outer circle
-        ctx.strokeStyle = '#e8e5e0';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.outerRadius, 0, Math.PI * 2);
-        ctx.stroke();
-
         // Draw inner circle (around tap button)
         ctx.strokeStyle = '#e8e5e0';
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.arc(this.centerX, this.centerY, this.innerRadius, 0, Math.PI * 2);
         ctx.stroke();
-
-        // Draw tick marks (12 positions like a clock) on outer ring
-        for (let i = 0; i < 12; i++) {
-            const angle = (i * Math.PI * 2 / 12) - Math.PI / 2;
-            const x1 = this.centerX + Math.cos(angle) * (this.outerRadius - 15);
-            const y1 = this.centerY + Math.sin(angle) * (this.outerRadius - 15);
-            const x2 = this.centerX + Math.cos(angle) * this.outerRadius;
-            const y2 = this.centerY + Math.sin(angle) * this.outerRadius;
-
-            ctx.strokeStyle = '#e8e5e0';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-        }
     }
 
     drawTaps(state) {
@@ -324,10 +307,10 @@ class CircularVisualization {
             // This ensures even distribution around the full 360° circle
             const angle = (index / expectedTotalTaps) * Math.PI * 2 - Math.PI / 2;
 
-            // Determine color and line thickness based on accuracy
+            // Determine color, line thickness, and length based on accuracy
             let color = COLORS.NEUTRAL;
             let lineWidth = 2;
-            let markLength = 12;
+            let lineExtension = 1.0; // Full length to outer radius
 
             if (index > 0 && state.tapIntervals[index - 1]) {
                 const interval = state.tapIntervals[index - 1];
@@ -337,23 +320,26 @@ class CircularVisualization {
                 if (errorPercent < THRESHOLDS.PERFECT) {
                     color = COLORS.PERFECT;
                     lineWidth = 3.5;
-                    markLength = 15;
+                    lineExtension = 1.0; // Full length
                 } else if (errorPercent < THRESHOLDS.GOOD) {
                     color = COLORS.GOOD;
                     lineWidth = 2.5;
-                    markLength = 13;
+                    lineExtension = 0.85; // 85% length
                 } else {
                     color = COLORS.OFF;
                     lineWidth = 2;
-                    markLength = 11;
+                    lineExtension = 0.7; // 70% length
                 }
             }
 
-            // Calculate radial line coordinates (extending outward from tap zone edge)
+            // Calculate radial line coordinates (extending from inner circle outward)
+            // Length varies based on timing accuracy
+            const maxLength = this.outerRadius - this.innerRadius;
+            const lineLength = maxLength * lineExtension;
             const startX = this.centerX + Math.cos(angle) * this.innerRadius;
             const startY = this.centerY + Math.sin(angle) * this.innerRadius;
-            const endX = this.centerX + Math.cos(angle) * (this.innerRadius + markLength);
-            const endY = this.centerY + Math.sin(angle) * (this.innerRadius + markLength);
+            const endX = this.centerX + Math.cos(angle) * (this.innerRadius + lineLength);
+            const endY = this.centerY + Math.sin(angle) * (this.innerRadius + lineLength);
 
             // Draw radial mark
             ctx.strokeStyle = color;
