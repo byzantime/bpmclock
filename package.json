@@ -1,5 +1,5 @@
 {
-  "name": "tap-tempo-perfectionist",
+  "name": "bpmclock",
   "version": "0.1.0",
   "description": "Tap tempo rhythm training with PID controller",
   "scripts": {

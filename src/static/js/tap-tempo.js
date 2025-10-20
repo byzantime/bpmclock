@@ -1,5 +1,5 @@
 /**
- * Tap Tempo Perfectionist
+ * BPM Clock
  * PID controller-based rhythm training app
  */
 
@@ -41,6 +41,7 @@ class TapTempoState {
         this.sessionDuration = 60; // seconds
 
         this.isRunning = false;
+        this.hasStarted = false; // Track if first tap has been made
         this.startTime = null;
         this.elapsedTime = 0;
 
@@ -313,52 +314,64 @@ class CircularVisualization {
         if (state.taps.length === 0) return;
 
         const ctx = this.ctx;
-        const tapsToShow = state.taps.slice(-this.maxTaps);
-        const intervalsToShow = state.tapIntervals.slice(-this.maxTaps);
 
-        // Position dots in the middle of the ring (between inner and outer radius)
-        const ringRadius = (this.innerRadius + this.outerRadius) / 2;
+        // Calculate expected total taps for the session duration
+        // BPM = beats per minute, so beats per second = BPM / 60
+        const expectedTotalTaps = (state.targetBPM / 60) * state.sessionDuration;
 
-        tapsToShow.forEach((tap, index) => {
-            // Calculate position around circle
-            const angle = (index / this.maxTaps) * Math.PI * 2 - Math.PI / 2;
-            const x = this.centerX + Math.cos(angle) * ringRadius;
-            const y = this.centerY + Math.sin(angle) * ringRadius;
+        state.taps.forEach((tap, index) => {
+            // Calculate angle based on tap index relative to expected total taps
+            // This ensures even distribution around the full 360° circle
+            const angle = (index / expectedTotalTaps) * Math.PI * 2 - Math.PI / 2;
 
-            // Determine color based on accuracy
+            // Determine color and line thickness based on accuracy
             let color = COLORS.NEUTRAL;
-            let size = 6;
+            let lineWidth = 2;
+            let markLength = 12;
 
-            if (index > 0 && intervalsToShow[index - 1]) {
-                const interval = intervalsToShow[index - 1];
+            if (index > 0 && state.tapIntervals[index - 1]) {
+                const interval = state.tapIntervals[index - 1];
                 const error = Math.abs(interval - state.targetInterval);
                 const errorPercent = error / state.targetInterval;
 
                 if (errorPercent < THRESHOLDS.PERFECT) {
                     color = COLORS.PERFECT;
-                    size = 7;
+                    lineWidth = 3.5;
+                    markLength = 15;
                 } else if (errorPercent < THRESHOLDS.GOOD) {
                     color = COLORS.GOOD;
-                    size = 6;
+                    lineWidth = 2.5;
+                    markLength = 13;
                 } else {
                     color = COLORS.OFF;
-                    size = 5;
+                    lineWidth = 2;
+                    markLength = 11;
                 }
             }
 
-            // Draw tap dot
-            ctx.fillStyle = color;
+            // Calculate radial line coordinates (extending outward from outer radius)
+            const startX = this.centerX + Math.cos(angle) * this.outerRadius;
+            const startY = this.centerY + Math.sin(angle) * this.outerRadius;
+            const endX = this.centerX + Math.cos(angle) * (this.outerRadius + markLength);
+            const endY = this.centerY + Math.sin(angle) * (this.outerRadius + markLength);
+
+            // Draw radial mark
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
             ctx.beginPath();
-            ctx.arc(x, y, size, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
 
             // Add subtle glow for recent taps
-            if (index >= tapsToShow.length - 5) {
+            if (index >= state.taps.length - 5) {
                 ctx.strokeStyle = color;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = lineWidth + 2;
                 ctx.globalAlpha = 0.3;
                 ctx.beginPath();
-                ctx.arc(x, y, size + 3, 0, Math.PI * 2);
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
                 ctx.stroke();
                 ctx.globalAlpha = 1;
             }
@@ -418,7 +431,6 @@ class TapTempoUI {
         this.trainingScreen = document.getElementById('training-screen');
         this.tapZone = document.getElementById('tap-zone');
         this.timeRemaining = document.getElementById('time-remaining');
-        this.tapCount = document.getElementById('tap-count');
         this.accuracy = document.getElementById('accuracy');
         this.tempoStatus = document.getElementById('tempo-status');
         this.tapFeedback = document.getElementById('tap-feedback');
@@ -515,20 +527,17 @@ class TapTempoUI {
         this.state.setTargetBPM(parseInt(this.targetBPMInput.value));
         this.state.sessionDuration = parseInt(this.sessionDurationSelect.value);
 
-        // Start session
+        // Mark session as ready (but not started until first tap)
         this.state.isRunning = true;
-        this.state.startTime = Date.now();
 
-        // Start metronome
+        // Set up metronome but don't start it yet
         this.metronome.setBPM(this.state.targetBPM);
-        this.metronome.start();
 
         // Show training screen
         this.showTraining();
         this.updateUI();
 
-        // Start timers
-        this.sessionTimer = setTimeout(() => this.endSession(), this.state.sessionDuration * 1000);
+        // Start UI update timer (to show "waiting for first tap" message)
         this.updateTimer = setInterval(() => this.updateUI(), 100);
     }
 
@@ -541,17 +550,16 @@ class TapTempoUI {
         this.state.setTargetBPM(bpm);
         this.state.sessionDuration = duration;
 
+        // Mark session as ready (but not started until first tap)
         this.state.isRunning = true;
-        this.state.startTime = Date.now();
 
-        // Start metronome
+        // Set up metronome but don't start it yet
         this.metronome.setBPM(this.state.targetBPM);
-        this.metronome.start();
 
         this.showTraining();
         this.updateUI();
 
-        this.sessionTimer = setTimeout(() => this.endSession(), this.state.sessionDuration * 1000);
+        // Start UI update timer (to show "waiting for first tap" message)
         this.updateTimer = setInterval(() => this.updateUI(), 100);
     }
 
@@ -572,6 +580,19 @@ class TapTempoUI {
         if (!this.state.isRunning) return;
 
         const timestamp = Date.now();
+
+        // If this is the first tap, start the session timer and metronome
+        if (!this.state.hasStarted) {
+            this.state.hasStarted = true;
+            this.state.startTime = timestamp;
+
+            // Start metronome
+            this.metronome.start();
+
+            // Start session timer
+            this.sessionTimer = setTimeout(() => this.endSession(), this.state.sessionDuration * 1000);
+        }
+
         this.state.addTap(timestamp);
 
         // Visual feedback
@@ -585,13 +606,20 @@ class TapTempoUI {
     updateUI() {
         if (!this.state.isRunning) return;
 
+        // If session hasn't started yet (waiting for first tap)
+        if (!this.state.hasStarted) {
+            this.timeRemaining.textContent = this.state.sessionDuration;
+            this.accuracy.textContent = '—';
+            this.tempoStatus.innerHTML = '<span class="tempo-indicator">Tap to begin...</span>';
+            this.tapFeedback.textContent = 'Make your first tap to start the metronome';
+            this.tapFeedback.style.color = COLORS.NEUTRAL;
+            return;
+        }
+
         // Update timer
         const elapsed = Math.floor((Date.now() - this.state.startTime) / 1000);
         const remaining = Math.max(0, this.state.sessionDuration - elapsed);
         this.timeRemaining.textContent = remaining;
-
-        // Update tap count
-        this.tapCount.textContent = this.state.taps.length;
 
         // Update accuracy
         if (this.state.runningAccuracy > 0) {
@@ -719,7 +747,7 @@ let app;
 
 function init() {
     app = new TapTempoUI();
-    console.log('Tap Tempo Perfectionist initialized');
+    console.log('BPM Clock initialized');
 }
 
 // Initialize when DOM is ready

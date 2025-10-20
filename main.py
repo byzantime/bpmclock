@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tap Tempo Perfectionist - Static Site Generator
+"""BPM Clock - Static Site Generator
 
 Builds the static site using Jinja2 templates
 """
@@ -85,7 +85,7 @@ def render_template(env, template_name, output_path, context=None):
 
 def build_site():
     """Main build function"""
-    print("Building Tap Tempo Perfectionist...")
+    print("Building BPM Clock...")
 
     # Setup
     env = setup_jinja_env()
@@ -98,7 +98,7 @@ def build_site():
     # Render index page
     print("\nGenerating HTML pages...")
     context = {
-        "title": "Tap Tempo Perfectionist - Rhythm Training",
+        "title": "BPM Clock - Rhythm Training",
         "description": (
             "Train your rhythm with PID controller feedback. Develop metronome-like"
             " consistency."
