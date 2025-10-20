@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Node_modules
+node_modules/
+
+# Environment
+.venv/
+
+# Ignore generated files
+build_temp/
+build/
+
+.claude
+
+# Local Netlify folder
+.netlify
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace

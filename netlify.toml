@@ -1,0 +1,19 @@
+[build]
+  command = """
+    curl -LsSf https://astral.sh/uv/install.sh | sh &&
+    export PATH="$HOME/.cargo/bin:$PATH" &&
+    uv sync &&
+    npm install &&
+    uv run python main.py &&
+    npx tailwindcss -i ./src/static/css/styles.css -o ./build/static/css/styles.css --minify
+  """
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "18"
+  PYTHON_VERSION = "3.11"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

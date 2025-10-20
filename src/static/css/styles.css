@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Inter Light (300) */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('/static/fonts/Inter-Light.woff2') format('woff2');
+  }
+
+  /* Inter Regular (400) */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('/static/fonts/Inter-Regular.woff2') format('woff2');
+  }
+
+  /* Inter Medium (500) */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('/static/fonts/Inter-Medium.woff2') format('woff2');
+  }
+
+  /* Inter SemiBold (600) */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/static/fonts/Inter-SemiBold.woff2') format('woff2');
+  }
+}
+
+@layer components {
+  /* Input styles */
+  .tap-input {
+    @apply bg-cream border border-cream-border text-charcoal text-2xl text-center p-4 rounded-soft
+           focus:outline-none focus:border-slate-blue focus:shadow-blue-glow transition-all duration-200;
+  }
+
+  /* Buttons */
+  .primary-button {
+    @apply bg-slate-blue text-cream px-8 py-4 rounded-soft font-medium text-lg
+           hover:bg-slate-blue-dark transition-all duration-200 shadow-soft
+           hover:shadow-soft-lg active:scale-95;
+  }
+
+  .secondary-button {
+    @apply bg-cream border-2 border-slate-blue text-slate-blue px-6 py-3 rounded-soft font-medium
+           hover:bg-cream-dark transition-all duration-200 active:scale-95;
+  }
+
+  .control-button {
+    @apply bg-cream-dark border border-cream-border text-charcoal rounded-soft
+           hover:border-slate-blue hover:text-slate-blue transition-all duration-200
+           active:scale-95 flex items-center justify-center;
+  }
+
+  /* Tap Zone */
+  .tap-zone {
+    @apply relative w-full aspect-square max-w-md mx-auto
+           bg-gradient-to-br from-cream-dark to-cream
+           border-4 border-slate-blue rounded-full
+           flex flex-col items-center justify-center
+           cursor-pointer select-none
+           transition-all duration-150
+           shadow-soft-lg
+           hover:shadow-blue-glow
+           active:scale-95;
+  }
+
+  /* Tap Zone Overlay (positioned over canvas) */
+  .tap-zone-overlay {
+    @apply absolute
+           w-64 h-64
+           bg-gradient-to-br from-cream-dark to-cream
+           border-4 border-slate-blue rounded-full
+           flex flex-col items-center justify-center
+           cursor-pointer select-none
+           transition-all duration-150
+           shadow-soft-lg
+           hover:shadow-blue-glow
+           active:scale-95
+           z-10;
+  }
+
+  .tap-zone-text {
+    @apply text-6xl font-light text-slate-blue tracking-wider;
+  }
+
+  .tap-zone-subtitle {
+    @apply text-sm text-charcoal-dim mt-2 uppercase tracking-wide;
+  }
+
+  /* Tap Zone Active State */
+  .tap-zone.active,
+  .tap-zone-overlay.active {
+    @apply scale-95 shadow-blue-glow border-slate-blue-dark;
+  }
+
+  /* Stat Cards */
+  .stat-card {
+    @apply bg-cream-dark border border-cream-border rounded-soft p-6 shadow-soft text-center;
+  }
+
+  .stat-label {
+    @apply text-charcoal-dim text-sm uppercase tracking-wide mb-2;
+  }
+
+  .stat-value {
+    @apply text-4xl font-light text-charcoal;
+  }
+
+  .stat-unit {
+    @apply text-charcoal-dim text-xs mt-1;
+  }
+
+  /* Tempo Indicator */
+  .tempo-indicator {
+    @apply inline-block px-4 py-2 rounded-soft text-sm font-medium;
+  }
+
+  .tempo-indicator.on-time {
+    @apply bg-success-green bg-opacity-20 text-success-green border border-success-green;
+  }
+
+  .tempo-indicator.rushing {
+    @apply bg-warning-amber bg-opacity-20 text-warning-amber border border-warning-amber;
+  }
+
+  .tempo-indicator.dragging {
+    @apply bg-error-red bg-opacity-20 text-error-red border border-error-red;
+  }
+
+  .tempo-indicator.accelerating {
+    @apply bg-slate-blue bg-opacity-20 text-slate-blue-dark border border-slate-blue;
+  }
+
+  .tempo-indicator.decelerating {
+    @apply bg-charcoal-dim bg-opacity-20 text-charcoal border border-charcoal-dim;
+  }
+
+  /* Animations */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .slide-in {
+    animation: slideIn 0.4s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Pulse animation for tap feedback */
+  .tap-pulse {
+    animation: tapPulse 0.3s ease-out;
+  }
+
+  @keyframes tapPulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}

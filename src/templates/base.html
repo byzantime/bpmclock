@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-cream">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Tap Tempo Perfectionist">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:site_name" content="Tap Tempo Perfectionist">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tap Tempo Perfectionist">
+    <meta name="twitter:description" content="{{ description }}">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+</head>
+<body class="bg-cream text-charcoal font-sans antialiased min-h-screen">
+    <div class="flex flex-col min-h-screen">
+
+        <!-- Main Content -->
+        <main class="flex-grow">
+{% block content %}
+{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-cream-border mt-16 bg-cream-dark">
+            <div class="container mx-auto px-4 py-8">
+                <div class="grid md:grid-cols-2 gap-8 text-sm text-charcoal-dim">
+                    <div id="about">
+                        <h3 class="text-charcoal font-medium mb-2">About Tap Tempo</h3>
+                        <p class="mb-2">
+                            This app uses a PID (Proportional-Integral-Derivative) controller to analyze your tapping rhythm and provide feedback on your timing consistency.
+                        </p>
+                        <p>
+                            The P term shows immediate errors, the I term tracks overall rushing or dragging tendencies, and the D term detects acceleration or deceleration in your tempo.
+                        </p>
+                    </div>
+                    <div class="md:text-right">
+                        <p class="mb-2">
+                            Built by <a href="https://www.hugobaldwin.com" class="text-slate-blue hover:text-slate-blue-dark transition-colors" target="_blank">Hugo Baldwin</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+{% block scripts %}
+{% endblock %}
+</body>
+</html>
