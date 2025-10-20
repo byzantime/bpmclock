@@ -69,6 +69,11 @@
 
     <!-- Training Screen (hidden initially) -->
     <div id="training-screen" class="hidden max-w-6xl mx-auto">
+        <!-- Metronome Pulse Indicator (top-right corner) -->
+        <div class="absolute top-8 right-8">
+            <div id="metronome-pulse" class="w-6 h-6 rounded-full bg-slate-blue transition-all duration-100 opacity-60"></div>
+        </div>
+
         <div class="grid md:grid-cols-3 gap-8">
             <!-- Center/Right Panel: Integrated Tap Zone with Rhythm History -->
             <div class="md:col-span-2">
@@ -112,27 +117,11 @@
 
             <!-- Left Panel: Stats -->
             <div class="md:col-span-1 space-y-4">
-                <!-- Metronome Indicator -->
-                <div class="stat-card bg-cream">
-                    <div class="stat-label">Metronome</div>
-                    <div class="flex justify-center items-center py-3">
-                        <div id="metronome-pulse" class="w-8 h-8 rounded-full bg-slate-blue transition-all duration-100"></div>
-                    </div>
-                </div>
-
                 <!-- Accuracy -->
                 <div class="stat-card">
                     <div class="stat-label">Accuracy</div>
                     <div class="stat-value text-2xl" id="accuracy">—</div>
                     <div class="stat-unit">% within target</div>
-                </div>
-
-                <!-- Error Indicator -->
-                <div class="stat-card">
-                    <div class="stat-label">Tempo Status</div>
-                    <div id="tempo-status" class="text-center py-2">
-                        <span class="tempo-indicator">Waiting for taps...</span>
-                    </div>
                 </div>
 
                 <!-- PID Debug (small) -->
