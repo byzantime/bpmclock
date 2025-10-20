@@ -430,7 +430,6 @@ class TapTempoUI {
         // Training screen
         this.trainingScreen = document.getElementById('training-screen');
         this.tapZone = document.getElementById('tap-zone');
-        this.timeRemaining = document.getElementById('time-remaining');
         this.accuracy = document.getElementById('accuracy');
         this.tempoStatus = document.getElementById('tempo-status');
         this.tapFeedback = document.getElementById('tap-feedback');
@@ -608,18 +607,12 @@ class TapTempoUI {
 
         // If session hasn't started yet (waiting for first tap)
         if (!this.state.hasStarted) {
-            this.timeRemaining.textContent = this.state.sessionDuration;
             this.accuracy.textContent = '—';
             this.tempoStatus.innerHTML = '<span class="tempo-indicator">Tap to begin...</span>';
             this.tapFeedback.textContent = 'Make your first tap to start the metronome';
             this.tapFeedback.style.color = COLORS.NEUTRAL;
             return;
         }
-
-        // Update timer
-        const elapsed = Math.floor((Date.now() - this.state.startTime) / 1000);
-        const remaining = Math.max(0, this.state.sessionDuration - elapsed);
-        this.timeRemaining.textContent = remaining;
 
         // Update accuracy
         if (this.state.runningAccuracy > 0) {
