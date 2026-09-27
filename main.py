@@ -28,7 +28,6 @@ def ensure_build_dirs():
     build_dir = Path(__file__).parent / "build"
     static_dir = build_dir / "static"
 
-    # Create directories
     build_dir.mkdir(exist_ok=True)
     (static_dir / "css").mkdir(parents=True, exist_ok=True)
     (static_dir / "js").mkdir(parents=True, exist_ok=True)
@@ -43,7 +42,6 @@ def copy_static_assets():
     src_static = Path(__file__).parent / "src" / "static"
     build_static = Path(__file__).parent / "build" / "static"
 
-    # Copy JavaScript files
     js_src = src_static / "js"
     js_dest = build_static / "js"
     if js_src.exists():
@@ -51,7 +49,6 @@ def copy_static_assets():
             shutil.copy2(js_file, js_dest / js_file.name)
             print(f"Copied {js_file.name}")
 
-    # Copy fonts
     fonts_src = src_static / "fonts"
     fonts_dest = build_static / "fonts"
     if fonts_src.exists():
@@ -59,7 +56,6 @@ def copy_static_assets():
             shutil.copy2(font_file, fonts_dest / font_file.name)
             print(f"Copied {font_file.name}")
 
-    # Copy images if they exist
     img_src = src_static / "images"
     img_dest = build_static / "images"
     if img_src.exists() and any(img_src.iterdir()):
@@ -87,15 +83,12 @@ def build_site():
     """Main build function"""
     print("Building BPM Clock...")
 
-    # Setup
     env = setup_jinja_env()
     build_dir = ensure_build_dirs()
 
-    # Copy static assets
     print("\nCopying static assets...")
     copy_static_assets()
 
-    # Render index page
     print("\nGenerating HTML pages...")
     context = {
         "title": "BPM Clock - Rhythm Training",
