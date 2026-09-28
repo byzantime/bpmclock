@@ -1,0 +1,13 @@
+schema = 1
+
+[setup]
+run = "uv sync"
+
+[jobs.stifle]
+run = "uv run stifle check --isolated --max-doc-lines 7 main.py"
+
+[jobs.ruff-format]
+run = "uv run ruff format --check ."
+
+[jobs.ruff-check]
+run = "uv run ruff check ."
